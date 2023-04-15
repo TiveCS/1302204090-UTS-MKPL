@@ -35,8 +35,7 @@ public class TaxCalculator {
         Person person = employee.getPerson();
 
         int tax;
-        int numberOfChildren = Math.min(person.getChildren().size(), 3);
-        boolean isMarried = person.getSpouse() != null;
+        int minimumIncomeToGetTax = getMinimumIncomeToGetTax(person);
 
         int incomeByMonthWorking = IncomeCalculator.getMonthlyIncome(employee) * numberOfMonthWorking;
         int deductible = employee.getPerson().getAnnualDeductible();
@@ -45,12 +44,27 @@ public class TaxCalculator {
             System.err.println("More than 12 month working per year");
         }
 
-        if (isMarried) {
-            tax = (int) Math.round(0.05 * ((incomeByMonthWorking - deductible - (MIN_INCOME_TAX + MARRIED_ADDITION_MIN_TAX + (numberOfChildren * PER_CHILD_ADDITION_MIN_TAX)))));
-        }else {
-            tax = (int) Math.round(0.05 * ((incomeByMonthWorking - deductible - MIN_INCOME_TAX)));
-        }
+        tax = (int) (Math.round(0.05 * ((incomeByMonthWorking - deductible - minimumIncomeToGetTax))));
 
         return Math.max(tax, 0);
+    }
+
+    /**
+     * Mendapatkan minimum penghasilan untuk kena pembayaran pajak
+     *
+     * @param person objek person
+     * @return minimum penghasilan untuk kena pajak
+     */
+    private static int getMinimumIncomeToGetTax(Person person) {
+        boolean isMarried = person.getSpouse() != null;
+        int numberOfChildren = Math.min(person.getChildren().size(), 3);
+
+        int minimumIncome = MIN_INCOME_TAX;
+
+        if (isMarried) {
+            minimumIncome += MARRIED_ADDITION_MIN_TAX + (numberOfChildren * PER_CHILD_ADDITION_MIN_TAX);
+        }
+
+        return minimumIncome;
     }
 }
