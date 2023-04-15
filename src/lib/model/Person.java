@@ -3,6 +3,9 @@ package lib.model;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Menggambarkan data seseorang serta hubungan dan data kepegawaian
+ */
 public class Person {
 
     private final String idNumber;
@@ -17,6 +20,14 @@ public class Person {
     private int otherMonthlyIncome = 0;
     private int annualDeductible = 0;
 
+    /**
+     * Memodelkan objek Person
+     *
+     * @param idNumber id angka sesorang
+     * @param name nama lengkap
+     * @param address alamat
+     * @param gender jenis kelamin
+     */
     public Person(String idNumber, String name, String address, Gender gender) {
         this.idNumber = idNumber;
         this.name = name;

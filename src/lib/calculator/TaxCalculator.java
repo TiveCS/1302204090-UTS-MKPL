@@ -11,6 +11,11 @@ public class TaxCalculator {
     private static final int MARRIED_ADDITION_MIN_TAX = 4500000;
     private static final int PER_CHILD_ADDITION_MIN_TAX = 1500000;
 
+    /**
+     * Mendapatkan pendapatan bersih setelah
+     * @param employee
+     * @return
+     */
     public static int getAnnualIncomeTax(Employee employee) {
         LocalDate date = LocalDate.now(), joinedAt = employee.getJoinedAt();
 
@@ -19,6 +24,13 @@ public class TaxCalculator {
         return calculateTax(employee, monthWorkingInYear);
     }
 
+    /**
+     * Menghitung pajak berdasarkan waktu Employee bekerja
+     *
+     * @param employee objek employee
+     * @param numberOfMonthWorking waktu bekerja dalam bulan
+     * @return pajak dalam 5%
+     */
     public static int calculateTax(Employee employee, final int numberOfMonthWorking) {
         Person person = employee.getPerson();
 
