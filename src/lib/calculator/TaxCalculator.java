@@ -11,6 +11,11 @@ public class TaxCalculator {
     private static final int MARRIED_ADDITION_MIN_TAX = 4500000;
     private static final int PER_CHILD_ADDITION_MIN_TAX = 1500000;
 
+    /**
+     * Mendapatkan pendapatan bersih setelah
+     * @param employee
+     * @return
+     */
     public static int getAnnualIncomeTax(Employee employee) {
         LocalDate date = LocalDate.now(), joinedAt = employee.getJoinedAt();
 
@@ -19,12 +24,18 @@ public class TaxCalculator {
         return calculateTax(employee, monthWorkingInYear);
     }
 
+    /**
+     * Menghitung pajak berdasarkan waktu Employee bekerja
+     *
+     * @param employee objek employee
+     * @param numberOfMonthWorking waktu bekerja dalam bulan
+     * @return pajak dalam 5%
+     */
     public static int calculateTax(Employee employee, final int numberOfMonthWorking) {
         Person person = employee.getPerson();
 
         int tax;
-        int numberOfChildren = Math.min(person.getChildren().size(), 3);
-        boolean isMarried = person.getSpouse() != null;
+        int minimumIncomeToGetTax = getMinimumIncomeToGetTax(person);
 
         int incomeByMonthWorking = IncomeCalculator.getMonthlyIncome(employee) * numberOfMonthWorking;
         int deductible = employee.getPerson().getAnnualDeductible();
@@ -33,12 +44,27 @@ public class TaxCalculator {
             System.err.println("More than 12 month working per year");
         }
 
-        if (isMarried) {
-            tax = (int) Math.round(0.05 * ((incomeByMonthWorking - deductible - (MIN_INCOME_TAX + MARRIED_ADDITION_MIN_TAX + (numberOfChildren * PER_CHILD_ADDITION_MIN_TAX)))));
-        }else {
-            tax = (int) Math.round(0.05 * ((incomeByMonthWorking - deductible - MIN_INCOME_TAX)));
-        }
+        tax = (int) (Math.round(0.05 * ((incomeByMonthWorking - deductible - minimumIncomeToGetTax))));
 
         return Math.max(tax, 0);
+    }
+
+    /**
+     * Mendapatkan minimum penghasilan untuk kena pembayaran pajak
+     *
+     * @param person objek person
+     * @return minimum penghasilan untuk kena pajak
+     */
+    private static int getMinimumIncomeToGetTax(Person person) {
+        boolean isMarried = person.getSpouse() != null;
+        int numberOfChildren = Math.min(person.getChildren().size(), 3);
+
+        int minimumIncome = MIN_INCOME_TAX;
+
+        if (isMarried) {
+            minimumIncome += MARRIED_ADDITION_MIN_TAX + (numberOfChildren * PER_CHILD_ADDITION_MIN_TAX);
+        }
+
+        return minimumIncome;
     }
 }
